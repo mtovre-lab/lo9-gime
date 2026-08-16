@@ -1,0 +1,1150 @@
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>🎤 تكلم معي! | لعبة الشخصية المضحكة</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary: #ff4757;
+            --primary-hover: #ff6b81;
+            --secondary: #1e90ff;
+            --accent: #ffa502;
+            --bg-gradient: linear-gradient(135deg, #a8c0ff 0%, #3f2b96 100%);
+            --card-bg: rgba(255, 255, 255, 0.92);
+            --text-color: #2f3542;
+            --text-light: #747d8c;
+            --radius-lg: 24px;
+            --radius-md: 16px;
+            --radius-sm: 12px;
+            --shadow-strong: 0 20px 40px rgba(0,0,0,0.25);
+            --shadow-soft: 0 10px 25px rgba(0,0,0,0.12);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+            -webkit-user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: 'Tajawal', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-gradient);
+            min-height: 100vh;
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 16px;
+            overflow-x: hidden;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 520px;
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-radius: var(--radius-lg);
+            padding: 24px 20px;
+            box-shadow: var(--shadow-strong);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 18px;
+            position: relative;
+        }
+
+        /* Header Styles */
+        header {
+            text-align: center;
+            width: 100%;
+        }
+
+        header h1 {
+            font-size: 1.85rem;
+            font-weight: 900;
+            color: #2f3542;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        header p {
+            font-size: 0.95rem;
+            color: var(--text-light);
+            font-weight: 700;
+            line-height: 1.4;
+        }
+
+        /* Status Badge */
+        .status-badge {
+            background: #eccc68;
+            color: #2f3542;
+            padding: 8px 18px;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 0.95rem;
+            box-shadow: inset 0 -2px 0 rgba(0,0,0,0.15), var(--shadow-soft);
+            transition: all 0.3s ease;
+            text-align: center;
+            max-width: 90%;
+            border: 2px solid #ffffff;
+        }
+
+        .status-badge.listening {
+            background: #ff4757;
+            color: #ffffff;
+            animation: pulse-border 1.5s infinite;
+        }
+
+        .status-badge.speaking {
+            background: #2ed573;
+            color: #ffffff;
+        }
+
+        .status-badge.processing {
+            background: #ffa502;
+            color: #ffffff;
+        }
+
+        @keyframes pulse-border {
+            0% { box-shadow: 0 0 0 0 rgba(255, 71, 87, 0.6); }
+            70% { box-shadow: 0 0 0 14px rgba(255, 71, 87, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 71, 87, 0); }
+        }
+
+        /* Character Canvas Container */
+        .character-wrapper {
+            position: relative;
+            width: 240px;
+            height: 240px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 5px 0;
+        }
+
+        .character-bg {
+            position: absolute;
+            width: 210px;
+            height: 210px;
+            background: radial-gradient(circle, rgba(255,255,255,0.8) 0%, rgba(235,240,255,0.3) 70%, transparent 100%);
+            border-radius: 50%;
+            z-index: 0;
+        }
+
+        /* SVG Character Styling & Keyframes */
+        #cartoon-character {
+            width: 220px;
+            height: 220px;
+            z-index: 1;
+            transform-origin: bottom center;
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        /* Idle Animations */
+        .char-idle {
+            animation: floatIdle 3.5s ease-in-out infinite;
+        }
+
+        .char-idle .eye-pupil {
+            animation: eyeMove 6s infinite ease-in-out;
+        }
+
+        .char-idle .eye {
+            animation: blinkEye 4s infinite;
+        }
+
+        /* Listening Animations */
+        .char-listening {
+            animation: listeningTilt 1.2s infinite alternate ease-in-out;
+        }
+
+        .char-listening .ear-left {
+            transform-origin: right center;
+            animation: wiggleEar 0.6s infinite alternate ease-in-out;
+        }
+
+        .char-listening .ear-right {
+            transform-origin: left center;
+            animation: wiggleEar 0.6s infinite alternate ease-in-out 0.3s;
+        }
+
+        /* Speaking Animations */
+        .char-speaking {
+            animation: bounceTalk 0.5s infinite alternate ease-in-out;
+        }
+
+        .char-speaking .hand-left {
+            transform-origin: top right;
+            animation: waveLeftHand 0.4s infinite alternate ease-in-out;
+        }
+
+        .char-speaking .hand-right {
+            transform-origin: top left;
+            animation: waveRightHand 0.4s infinite alternate ease-in-out 0.2s;
+        }
+
+        @keyframes floatIdle {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-8px) rotate(1.5deg); }
+        }
+
+        @keyframes blinkEye {
+            0%, 94%, 98%, 100% { transform: scaleY(1); }
+            96% { transform: scaleY(0.1); }
+        }
+
+        @keyframes eyeMove {
+            0%, 100% { transform: translate(0, 0); }
+            20% { transform: translate(-3px, -1px); }
+            40% { transform: translate(3px, 1px); }
+            60% { transform: translate(0, 2px); }
+            80% { transform: translate(-2px, 0); }
+        }
+
+        @keyframes listeningTilt {
+            0% { transform: rotate(-4deg) translateY(-2px) scale(1.02); }
+            100% { transform: rotate(4deg) translateY(2px) scale(1.02); }
+        }
+
+        @keyframes wiggleEar {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(8deg); }
+        }
+
+        @keyframes bounceTalk {
+            0% { transform: translateY(0) scale(1); }
+            100% { transform: translateY(-10px) scale(1.03) rotate(-1deg); }
+        }
+
+        @keyframes waveLeftHand {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(-20deg); }
+        }
+
+        @keyframes waveRightHand {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(20deg); }
+        }
+
+        /* Main Mic Button */
+        .main-btn-wrapper {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+        }
+
+        .btn-mic {
+            background: linear-gradient(135deg, #ff4757, #ff6b81);
+            color: white;
+            border: none;
+            width: 100%;
+            max-width: 280px;
+            height: 64px;
+            border-radius: 50px;
+            font-size: 1.25rem;
+            font-weight: 900;
+            font-family: inherit;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            box-shadow: 0 10px 20px rgba(255, 71, 87, 0.35), inset 0 -4px 0 rgba(0,0,0,0.2);
+            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-mic:active {
+            transform: translateY(3px);
+            box-shadow: 0 4px 10px rgba(255, 71, 87, 0.35), inset 0 -1px 0 rgba(0,0,0,0.2);
+        }
+
+        .btn-mic.active {
+            background: linear-gradient(135deg, #2ed573, #26af5f);
+            box-shadow: 0 10px 20px rgba(46, 213, 115, 0.35), inset 0 -4px 0 rgba(0,0,0,0.2);
+        }
+
+        .btn-mic .mic-icon {
+            font-size: 1.5rem;
+        }
+
+        /* Action Buttons Grid */
+        .actions-grid {
+            display: flex;
+            gap: 12px;
+            width: 100%;
+            justify-content: center;
+        }
+
+        .btn-action {
+            flex: 1;
+            padding: 12px 16px;
+            border-radius: var(--radius-md);
+            border: none;
+            font-family: inherit;
+            font-weight: 700;
+            font-size: 0.95rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            transition: all 0.2s ease;
+            box-shadow: var(--shadow-soft);
+        }
+
+        .btn-stop {
+            background: #f1f2f6;
+            color: #ff4757;
+            border: 2px solid #ff4757;
+        }
+
+        .btn-stop:active {
+            background: #ff4757;
+            color: white;
+        }
+
+        .btn-repeat {
+            background: #f1f2f6;
+            color: #1e90ff;
+            border: 2px solid #1e90ff;
+        }
+
+        .btn-repeat:active {
+            background: #1e90ff;
+            color: white;
+        }
+
+        /* Transcript Box */
+        .transcript-container {
+            width: 100%;
+            background: #ffffff;
+            border-radius: var(--radius-md);
+            padding: 14px;
+            box-shadow: inset 0 2px 6px rgba(0,0,0,0.06);
+            border: 1.5px solid #e1e8ef;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .transcript-line {
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+
+        .transcript-label {
+            font-weight: 700;
+            white-space: nowrap;
+            color: var(--text-light);
+            min-width: 80px;
+        }
+
+        .transcript-text {
+            font-weight: 700;
+            color: var(--text-color);
+            word-break: break-word;
+        }
+
+        .transcript-text.bot {
+            color: #2e86de;
+        }
+
+        /* Presets Section */
+        .section-title {
+            font-size: 0.9rem;
+            font-weight: 900;
+            color: var(--text-light);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 6px;
+            width: 100%;
+            text-align: right;
+        }
+
+        .presets-wrapper {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .presets-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            width: 100%;
+        }
+
+        .btn-preset {
+            background: #f1f2f6;
+            border: 2px solid transparent;
+            padding: 8px 4px;
+            border-radius: var(--radius-sm);
+            font-family: inherit;
+            font-size: 0.82rem;
+            font-weight: 700;
+            color: var(--text-color);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+        }
+
+        .btn-preset .preset-emoji {
+            font-size: 1.2rem;
+        }
+
+        .btn-preset.active {
+            background: #e3f2fd;
+            border-color: #2196f3;
+            color: #1976d2;
+            box-shadow: 0 4px 10px rgba(33, 150, 243, 0.2);
+        }
+
+        /* Settings Collapsible / Card */
+        .settings-card {
+            width: 100%;
+            background: #f8fa2c00;
+            border-radius: var(--radius-md);
+            padding: 12px 14px;
+            border: 1.5px solid #e1e8ef;
+            background: #ffffff;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .setting-item {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .setting-header {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--text-color);
+        }
+
+        .setting-value {
+            color: var(--secondary);
+            font-family: monospace;
+            font-size: 0.9rem;
+        }
+
+        input[type="range"] {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 8px;
+            border-radius: 4px;
+            background: #e4e7eb;
+            outline: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--primary);
+            cursor: pointer;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+            transition: transform 0.1s;
+        }
+
+        input[type="range"]::-webkit-slider-thumb:active {
+            transform: scale(1.2);
+        }
+
+        select.voice-select {
+            width: 100%;
+            padding: 10px;
+            border-radius: var(--radius-sm);
+            border: 1.5px solid #e1e8ef;
+            background: #ffffff;
+            font-family: inherit;
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--text-color);
+            outline: none;
+            cursor: pointer;
+        }
+
+        /* Alert Toast */
+        .alert-box {
+            display: none;
+            width: 100%;
+            background: #ff7675;
+            color: white;
+            padding: 10px 14px;
+            border-radius: var(--radius-sm);
+            font-size: 0.85rem;
+            font-weight: 700;
+            text-align: center;
+            box-shadow: var(--shadow-soft);
+        }
+
+        /* Footer */
+        footer {
+            font-size: 0.75rem;
+            color: var(--text-light);
+            text-align: center;
+            margin-top: 4px;
+        }
+
+        /* Responsive Fixes */
+        @media (max-width: 380px) {
+            .container {
+                padding: 16px 12px;
+            }
+            .character-wrapper {
+                width: 200px;
+                height: 200px;
+            }
+            #cartoon-character {
+                width: 180px;
+                height: 180px;
+            }
+            .presets-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+            .btn-preset {
+                font-size: 0.75rem;
+                padding: 6px 2px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- Header -->
+        <header>
+            <h1>🎤 تكلم معي!</h1>
+            <p>اضغط على الميكروفون وتكلم، وأنا غادي نعاود كلامك 😄</p>
+        </header>
+
+        <!-- Status Bar -->
+        <div id="statusBadge" class="status-badge">
+            اضغط على الميكروفون وابدأ الكلام 🎤
+        </div>
+
+        <!-- Alert Notification for Browser Support -->
+        <div id="alertBox" class="alert-box"></div>
+
+        <!-- Character Area -->
+        <div class="character-wrapper">
+            <div class="character-bg"></div>
+            <!-- Pure Inline SVG Character -->
+            <svg id="cartoon-character" class="char-idle" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <!-- Shadow Filters & Gradients -->
+                    <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+                        <feDropShadow dx="0" dy="4" stdDeviation="3" flood-opacity="0.15" />
+                    </filter>
+                    
+                    <linearGradient id="bodyGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stop-color="#ff9f43" />
+                        <stop offset="100%" stop-color="#ee5253" />
+                    </linearGradient>
+
+                    <linearGradient id="headGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                        <stop offset="0%" stop-color="#ffca28" />
+                        <stop offset="100%" stop-color="#ffa000" />
+                    </linearGradient>
+
+                    <radialGradient id="blushGrad" cx="50%" cy="50%" r="50%">
+                        <stop offset="0%" stop-color="#ff6b6b" stop-opacity="0.6"/>
+                        <stop offset="100%" stop-color="#ff6b6b" stop-opacity="0"/>
+                    </radialGradient>
+                </defs>
+
+                <!-- Ears -->
+                <g class="ears">
+                    <path class="ear-left" d="M 45 70 C 25 50, 20 85, 48 90 Z" fill="#ffa000" filter="url(#shadow)"/>
+                    <path class="ear-left-inner" d="M 43 73 C 32 60, 28 80, 46 86 Z" fill="#ff7400"/>
+                    
+                    <path class="ear-right" d="M 155 70 C 175 50, 180 85, 152 90 Z" fill="#ffa000" filter="url(#shadow)"/>
+                    <path class="ear-right-inner" d="M 157 73 C 168 60, 172 80, 154 86 Z" fill="#ff7400"/>
+                </g>
+
+                <!-- Body (Cute Small Body) -->
+                <g class="body-group" filter="url(#shadow)">
+                    <!-- Legs -->
+                    <ellipse cx="80" cy="175" rx="12" ry="8" fill="#e67e22" />
+                    <ellipse cx="120" cy="175" rx="12" ry="8" fill="#e67e22" />
+                    
+                    <!-- Torso -->
+                    <path d="M 70 125 C 65 165, 135 165, 130 125 Z" fill="url(#bodyGrad)" />
+                    <!-- Belly Badge -->
+                    <ellipse cx="100" cy="145" rx="18" ry="14" fill="#ffffff" opacity="0.8" />
+                    
+                    <!-- Hands -->
+                    <path class="hand-left" d="M 68 132 C 50 140, 50 150, 60 155" stroke="#ee5253" stroke-width="8" stroke-linecap="round" fill="none"/>
+                    <path class="hand-right" d="M 132 132 C 150 140, 150 150, 140 155" stroke="#ee5253" stroke-width="8" stroke-linecap="round" fill="none"/>
+                </g>
+
+                <!-- Hair Tufts -->
+                <path d="M 92 35 C 90 18, 100 20, 100 32 C 102 15, 112 18, 106 35 Z" fill="#e67e22" />
+
+                <!-- Head (Big Expressive Head) -->
+                <g class="head-group" filter="url(#shadow)">
+                    <ellipse cx="100" cy="82" rx="56" ry="48" fill="url(#headGrad)"/>
+                    
+                    <!-- Cheeks (Blush) -->
+                    <ellipse cx="62" cy="94" rx="10" ry="6" fill="url(#blushGrad)"/>
+                    <ellipse cx="138" cy="94" rx="10" ry="6" fill="url(#blushGrad)"/>
+
+                    <!-- Big Cute Eyes -->
+                    <g class="eyes">
+                        <!-- Left Eye -->
+                        <g class="eye">
+                            <ellipse cx="76" cy="74" rx="14" ry="18" fill="#ffffff" />
+                            <ellipse class="eye-pupil" cx="78" cy="75" rx="8" ry="10" fill="#2f3542" />
+                            <!-- Eye Catchlights -->
+                            <circle cx="75" cy="70" r="3.5" fill="#ffffff" />
+                            <circle cx="81" cy="79" r="1.5" fill="#ffffff" />
+                        </g>
+
+                        <!-- Right Eye -->
+                        <g class="eye">
+                            <ellipse cx="124" cy="74" rx="14" ry="18" fill="#ffffff" />
+                            <ellipse class="eye-pupil" cx="122" cy="75" rx="8" ry="10" fill="#2f3542" />
+                            <!-- Eye Catchlights -->
+                            <circle cx="119" cy="70" r="3.5" fill="#ffffff" />
+                            <circle cx="125" cy="79" r="1.5" fill="#ffffff" />
+                        </g>
+
+                        <!-- Eyebrows -->
+                        <path d="M 64 52 Q 76 46 86 52" stroke="#d35400" stroke-width="3.5" stroke-linecap="round" fill="none" />
+                        <path d="M 114 52 Q 124 46 136 52" stroke="#d35400" stroke-width="3.5" stroke-linecap="round" fill="none" />
+                    </g>
+
+                    <!-- Cute Snout/Nose -->
+                    <polygon points="96,84 104,84 100,89" fill="#e67e22" rx="2" ry="2"/>
+
+                    <!-- Dynamic Mouth Section -->
+                    <g id="mouthContainer">
+                        <!-- Default Idle Smile Mouth -->
+                        <path id="mouthIdle" d="M 82 98 Q 100 112 118 98" stroke="#2f3542" stroke-width="4" stroke-linecap="round" fill="none" />
+                    </g>
+                </g>
+            </svg>
+        </div>
+
+        <!-- Primary Control Button -->
+        <div class="main-btn-wrapper">
+            <button id="btnMic" class="btn-mic">
+                <span class="mic-icon">🎤</span>
+                <span id="btnMicText">تكلم</span>
+            </button>
+        </div>
+
+        <!-- Secondary Action Buttons -->
+        <div class="actions-grid">
+            <button id="btnStop" class="btn-action btn-stop">
+                <span>⏹️</span>
+                <span>وقف</span>
+            </button>
+            <button id="btnRepeat" class="btn-action btn-repeat">
+                <span>🔁</span>
+                <span>عاود</span>
+            </button>
+        </div>
+
+        <!-- Live Text Log Box -->
+        <div class="transcript-container">
+            <div class="transcript-line">
+                <span class="transcript-label">أنت قلت:</span>
+                <span id="userText" class="transcript-text">---</span>
+            </div>
+            <div class="transcript-line">
+                <span class="transcript-label">الشخصية قالت:</span>
+                <span id="botText" class="transcript-text bot">---</span>
+            </div>
+        </div>
+
+        <!-- Voice Presets -->
+        <div class="presets-wrapper">
+            <div class="section-title">🎭 وضع الصوت</div>
+            <div class="presets-grid">
+                <button class="btn-preset active" data-preset="baby">
+                    <span class="preset-emoji">🐣</span>
+                    <span>صوت صغير</span>
+                </button>
+
+                <button class="btn-preset" data-preset="funny">
+                    <span class="preset-emoji">😂</span>
+                    <span>مضحك</span>
+                </button>
+
+                <button class="btn-preset" data-preset="high">
+                    <span class="preset-emoji">🐿️</span>
+                    <span>صوت حاد</span>
+                </button>
+
+                <button class="btn-preset" data-preset="robot">
+                    <span class="preset-emoji">🤖</span>
+                    <span>روبوت</span>
+                </button>
+
+                <button class="btn-preset" data-preset="alien">
+                    <span class="preset-emoji">👽</span>
+                    <span>فضائي</span>
+                </button>
+
+                <button class="btn-preset" data-preset="deep">
+                    <span class="preset-emoji">🐻</span>
+                    <span>صوت غليظ</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Fine-tuning Audio Settings -->
+        <div class="settings-card">
+            <div class="section-title">🎛️ إعدادات الصوت الدقيقة</div>
+
+            <!-- Pitch Slider -->
+            <div class="setting-item">
+                <div class="setting-header">
+                    <span>🎚️ حدة الصوت (Pitch)</span>
+                    <span id="pitchVal" class="setting-value">1.8</span>
+                </div>
+                <input type="range" id="sliderPitch" min="0.5" max="2" step="0.1" value="1.8">
+            </div>
+
+            <!-- Rate Slider -->
+            <div class="setting-item">
+                <div class="setting-header">
+                    <span>🎚️ سرعة الكلام (Rate)</span>
+                    <span id="rateVal" class="setting-value">1.05</span>
+                </div>
+                <input type="range" id="sliderRate" min="0.5" max="1.8" step="0.05" value="1.05">
+            </div>
+
+            <!-- Volume Slider -->
+            <div class="setting-item">
+                <div class="setting-header">
+                    <span>🔊 مستوى الصوت (Volume)</span>
+                    <span id="volumeVal" class="setting-value">1.0</span>
+                </div>
+                <input type="range" id="sliderVolume" min="0" max="1" step="0.1" value="1.0">
+            </div>
+
+            <!-- Voice Selection Dropdown -->
+            <div class="setting-item">
+                <div class="setting-header">
+                    <span>🗣️ اختر الصوت (Voice)</span>
+                </div>
+                <select id="selectVoice" class="voice-select">
+                    <option value="">جاري تحميل الأصوات...</option>
+                </select>
+            </div>
+        </div>
+
+        <footer>
+            تطبيق تفاعلي مصمم بالكامل داخل ملف واحد | HTML5 Web Speech API
+        </footer>
+    </div>
+
+    <!-- MAIN JAVASCRIPT LOGIC -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+
+            // --- DOM Elements ---
+            const btnMic = document.getElementById('btnMic');
+            const btnMicText = document.getElementById('btnMicText');
+            const btnStop = document.getElementById('btnStop');
+            const btnRepeat = document.getElementById('btnRepeat');
+            
+            const statusBadge = document.getElementById('statusBadge');
+            const alertBox = document.getElementById('alertBox');
+            
+            const userTextElem = document.getElementById('userText');
+            const botTextElem = document.getElementById('botText');
+            
+            const characterSvg = document.getElementById('cartoon-character');
+            const mouthContainer = document.getElementById('mouthContainer');
+            
+            const sliderPitch = document.getElementById('sliderPitch');
+            const sliderRate = document.getElementById('sliderRate');
+            const sliderVolume = document.getElementById('sliderVolume');
+            
+            const pitchVal = document.getElementById('pitchVal');
+            const rateVal = document.getElementById('rateVal');
+            const volumeVal = document.getElementById('volumeVal');
+            
+            const selectVoice = document.getElementById('selectVoice');
+            const presetButtons = document.querySelectorAll('.btn-preset');
+
+            // --- App State ---
+            let isListening = false;
+            let isSpeaking = false;
+            let lastRecognizedText = '';
+            let mouthAnimationTimer = null;
+            let voicesList = [];
+
+            // Preset Configs
+            const PRESETS = {
+                baby:  { pitch: 1.8, rate: 1.05 },
+                funny: { pitch: 1.6, rate: 1.25 },
+                high:  { pitch: 2.0, rate: 1.15 },
+                robot: { pitch: 0.7, rate: 0.90 },
+                alien: { pitch: 1.9, rate: 0.75 },
+                deep:  { pitch: 0.5, rate: 0.85 }
+            };
+
+            // SVG Mouth Shapes for Lip-Sync
+            const MOUTH_SHAPES = {
+                idle: `<path d="M 82 98 Q 100 112 118 98" stroke="#2f3542" stroke-width="4" stroke-linecap="round" fill="none" />`,
+                smile: `<path d="M 80 96 Q 100 120 120 96 Z" fill="#ff4757" stroke="#2f3542" stroke-width="3" />`,
+                openO: `<ellipse cx="100" cy="102" rx="12" ry="14" fill="#2f3542" /><ellipse cx="100" cy="104" rx="8" ry="6" fill="#ff6b81" />`,
+                openA: `<path d="M 82 95 Q 100 88 118 95 Q 120 118 100 120 Q 80 118 82 95 Z" fill="#2f3542" /><path d="M 88 110 Q 100 102 112 110 Q 100 122 88 110 Z" fill="#ff6b81" />`,
+                wideGrate: `<path d="M 78 96 Q 100 90 122 96 Q 120 112 100 114 Q 80 112 78 96 Z" fill="#ffffff" stroke="#2f3542" stroke-width="3" /><line x1="80" y1="103" x2="120" y2="103" stroke="#2f3542" stroke-width="2"/>`
+            };
+
+            // --- 1. Web Speech API Recognition Setup ---
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            let recognition = null;
+
+            if (SpeechRecognition) {
+                recognition = new SpeechRecognition();
+                recognition.continuous = false;
+                recognition.interimResults = false;
+                
+                // Set language fallback hierarchy (ar-MA -> ar -> ar-SA)
+                recognition.lang = 'ar-MA';
+
+                recognition.onstart = () => {
+                    isListening = true;
+                    btnMic.classList.add('active');
+                    btnMicText.textContent = '🔴 كنسمعك...';
+                    updateStatus('كنسمعك... 👂', 'listening');
+                    setCharState('listening');
+                };
+
+                recognition.onresult = (event) => {
+                    const transcript = event.results[0][0].transcript;
+                    if (transcript && transcript.trim() !== '') {
+                        lastRecognizedText = transcript;
+                        userTextElem.textContent = transcript;
+                        updateStatus('فهمتك! 😄', 'processing');
+                        
+                        // Immediately reply with funny pitched speech
+                        speakText(transcript);
+                    }
+                };
+
+                recognition.onerror = (event) => {
+                    console.warn('Speech recognition error:', event.error);
+                    stopListening();
+                    if (event.error === 'no-speech') {
+                        updateStatus('ما سمعت والو، عاود تكلم! 🎤', '');
+                    } else if (event.error === 'not-allowed') {
+                        showAlert('المرجو السماح بصلاحيات استخدام الميكروفون!');
+                        updateStatus('الميكروفون محظور 🚫', '');
+                    } else {
+                        updateStatus('حدث خطأ، حاول مرة أخرى 🎤', '');
+                    }
+                };
+
+                recognition.onend = () => {
+                    isListening = false;
+                    if (!isSpeaking) {
+                        btnMic.classList.remove('active');
+                        btnMicText.textContent = 'تكلم';
+                        if (!lastRecognizedText) {
+                            setCharState('idle');
+                            updateStatus('اضغط على الميكروفون وابدأ الكلام 🎤', '');
+                        }
+                    }
+                };
+            } else {
+                showAlert('المتصفح ديالك ما كيدعمش التعرف على الصوت. جرب Chrome.');
+                btnMic.disabled = true;
+                btnMic.style.opacity = '0.6';
+                btnMic.style.cursor = 'not-allowed';
+                updateStatus('التعرف على الصوت غير مدعوم ❌', '');
+            }
+
+            // --- 2. Web Speech Synthesis Setup ---
+            const synth = window.speechSynthesis;
+
+            function populateVoices() {
+                if (!synth) return;
+                voicesList = synth.getVoices();
+                
+                selectVoice.innerHTML = '';
+                
+                if (voicesList.length === 0) {
+                    const opt = document.createElement('option');
+                    opt.value = '';
+                    opt.textContent = 'الأصوات الافتراضية للنظام';
+                    selectVoice.appendChild(opt);
+                    return;
+                }
+
+                // Filter Arabic voices first
+                const arabicVoices = voicesList.filter(v => v.lang.startsWith('ar'));
+                const otherVoices = voicesList.filter(v => !v.lang.startsWith('ar'));
+
+                if (arabicVoices.length > 0) {
+                    const groupAr = document.createElement('optgroup');
+                    groupAr.label = '── الأصوات العربية المتوفرة ──';
+                    arabicVoices.forEach(v => {
+                        const opt = document.createElement('option');
+                        opt.value = v.name;
+                        opt.textContent = `${v.name} (${v.lang})`;
+                        groupAr.appendChild(opt);
+                    });
+                    selectVoice.appendChild(groupAr);
+                }
+
+                if (otherVoices.length > 0) {
+                    const groupOther = document.createElement('optgroup');
+                    groupOther.label = '── أصوات أخرى ──';
+                    otherVoices.forEach(v => {
+                        const opt = document.createElement('option');
+                        opt.value = v.name;
+                        opt.textContent = `${v.name} (${v.lang})`;
+                        groupOther.appendChild(opt);
+                    });
+                    selectVoice.appendChild(groupOther);
+                }
+            }
+
+            populateVoices();
+            if (synth && synth.onvoiceschanged !== undefined) {
+                synth.onvoiceschanged = populateVoices;
+            }
+
+            // --- 3. Mouth Animation / Character State Controller ---
+
+            function setCharState(state) {
+                characterSvg.classList.remove('char-idle', 'char-listening', 'char-speaking');
+                
+                if (state === 'listening') {
+                    characterSvg.classList.add('char-listening');
+                    mouthContainer.innerHTML = MOUTH_SHAPES.openO;
+                } else if (state === 'speaking') {
+                    characterSvg.classList.add('char-speaking');
+                    startMouthAnimation();
+                } else {
+                    characterSvg.classList.add('char-idle');
+                    stopMouthAnimation();
+                    mouthContainer.innerHTML = MOUTH_SHAPES.idle;
+                }
+            }
+
+            function startMouthAnimation() {
+                stopMouthAnimation();
+                const shapes = [MOUTH_SHAPES.smile, MOUTH_SHAPES.openO, MOUTH_SHAPES.openA, MOUTH_SHAPES.wideGrate];
+                let index = 0;
+                
+                mouthAnimationTimer = setInterval(() => {
+                    index = (index + 1) % shapes.length;
+                    mouthContainer.innerHTML = shapes[index];
+                }, 120);
+            }
+
+            function stopMouthAnimation() {
+                if (mouthAnimationTimer) {
+                    clearInterval(mouthAnimationTimer);
+                    mouthAnimationTimer = null;
+                }
+            }
+
+            // --- 4. Text-To-Speech Playback Execution ---
+
+            function speakText(text) {
+                if (!synth) {
+                    showAlert('خاصية تحويل النص إلى صوت غير مدعومة!');
+                    return;
+                }
+
+                // Cancel ongoing playback or listening
+                stopListening();
+                synth.cancel();
+
+                const utterance = new SpeechSynthesisUtterance(text);
+                
+                // Language preference
+                utterance.lang = 'ar-SA';
+
+                // Pitch, Rate & Volume settings
+                utterance.pitch = parseFloat(sliderPitch.value);
+                utterance.rate = parseFloat(sliderRate.value);
+                utterance.volume = parseFloat(sliderVolume.value);
+
+                // Selected Voice logic
+                const selectedVoiceName = selectVoice.value;
+                if (selectedVoiceName && voicesList.length > 0) {
+                    const foundVoice = voicesList.find(v => v.name === selectedVoiceName);
+                    if (foundVoice) utterance.voice = foundVoice;
+                } else {
+                    // Fallback to first available arabic voice if unselected
+                    const arVoice = voicesList.find(v => v.lang.startsWith('ar'));
+                    if (arVoice) utterance.voice = arVoice;
+                }
+
+                utterance.onstart = () => {
+                    isSpeaking = true;
+                    botTextElem.textContent = text;
+                    updateStatus('دابا غادي نعاود كلامك 😂', 'speaking');
+                    setCharState('speaking');
+                };
+
+                utterance.onend = () => {
+                    isSpeaking = false;
+                    setCharState('idle');
+                    updateStatus('عاود تكلم! 🎤', '');
+                    btnMic.classList.remove('active');
+                    btnMicText.textContent = 'تكلم';
+                };
+
+                utterance.onerror = (e) => {
+                    console.error('Speech synthesis error:', e);
+                    isSpeaking = false;
+                    setCharState('idle');
+                    updateStatus('حدث خطأ أثناء نطق النص', '');
+                };
+
+                synth.speak(utterance);
+            }
+
+            // --- 5. Helper Functions & Event Handlers ---
+
+            function updateStatus(msg, statusClass) {
+                statusBadge.textContent = msg;
+                statusBadge.className = 'status-badge ' + (statusClass || '');
+            }
+
+            function showAlert(msg) {
+                alertBox.textContent = msg;
+                alertBox.style.display = 'block';
+                setTimeout(() => {
+                    alertBox.style.display = 'none';
+                }, 5000);
+            }
+
+            function stopListening() {
+                if (recognition && isListening) {
+                    try { recognition.stop(); } catch(e){}
+                    isListening = false;
+                }
+            }
+
+            function stopAll() {
+                stopListening();
+                if (synth) synth.cancel();
+                isSpeaking = false;
+                setCharState('idle');
+                updateStatus('اضغط على الميكروفون وابدأ الكلام 🎤', '');
+                btnMic.classList.remove('active');
+                btnMicText.textContent = 'تكلم';
+            }
+
+            // --- Event Listeners ---
+
+            // Mic Toggle Button
+            btnMic.addEventListener('click', () => {
+                if (!recognition) {
+                    showAlert('المتصفح لا يدعم التعرف على الصوت!');
+                    return;
+                }
+
+                if (isListening) {
+                    stopListening();
+                } else {
+                    if (isSpeaking) {
+                        synth.cancel();
+                        isSpeaking = false;
+                    }
+                    try {
+                        recognition.start();
+                    } catch(err) {
+                        console.warn('Recognition start error:', err);
+                        stopListening();
+                    }
+                }
+            });
+
+            // Stop Button
+            btnStop.addEventListener('click', stopAll);
+
+            // Repeat Button
+            btnRepeat.addEventListener('click', () => {
+                if (lastRecognizedText) {
+                    speakText(lastRecognizedText);
+                } else {
+                    updateStatus('ما كاين حتى كلام باش نعاودو! 🎤', '');
+                }
+            });
+
+            // Preset Buttons Click Handler
+            presetButtons.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    presetButtons.forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+
+                    const presetKey = btn.getAttribute('data-preset');
+                    if (PRESETS[presetKey]) {
+                        sliderPitch.value = PRESETS[presetKey].pitch;
+                        sliderRate.value = PRESETS[presetKey].rate;
+                        
+                        pitchVal.textContent = PRESETS[presetKey].pitch;
+                        rateVal.textContent = PRESETS[presetKey].rate;
+
+                        // Re-play speech if text exists
+                        if (lastRecognizedText && !isListening) {
+                            speakText(lastRecognizedText);
+                        }
+                    }
+                });
+            });
+
+            // Real-time Slider Syncing
+            sliderPitch.addEventListener('input', (e) => {
+                pitchVal.textContent = e.target.value;
+                presetButtons.forEach(b => b.classList.remove('active'));
+            });
+
+            sliderRate.addEventListener('input', (e) => {
+                rateVal.textContent = e.target.value;
+                presetButtons.forEach(b => b.classList.remove('active'));
+            });
+
+            sliderVolume.addEventListener('input', (e) => {
+                volumeVal.textContent = e.target.value;
+            });
+
+        });
+    </script>
+</body>
+</html>
