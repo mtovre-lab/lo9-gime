@@ -1,645 +1,112 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>مغير الصوت والشخصية التفاعلية</title>
-  <style>
-    :root {
-      --primary: #6c5ce7;
-      --primary-hover: #5a4bcf;
-      --bg-color: #0f172a;
-      --card-bg: #1e293b;
-      --text-color: #f8fafc;
-      --accent: #fd79a8;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>منصة لعبة المافيا - الرئيسية</title>
+    <style>
+        :root {
+            --bg-dark: #0a0b10;
+            --bg-card: rgba(18, 22, 36, 0.85);
+            --border: rgba(255, 255, 255, 0.1);
+            --primary: #e63946;
+            --primary-glow: rgba(230, 57, 70, 0.4);
+            --text-main: #f8f9fa;
+            --text-muted: #a0aab2;
+        }
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
 
-    body {
-      background-color: var(--bg-color);
-      color: var(--text-color);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-      padding: 20px;
-    }
+        body {
+            background-color: var(--bg-dark);
+            background-image: 
+                radial-gradient(circle at 50% 0%, rgba(230, 57, 70, 0.15), transparent 70%),
+                radial-gradient(circle at 10% 90%, rgba(17, 138, 178, 0.1), transparent 50%);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 15px;
+        }
 
-    .container {
-      background-color: var(--card-bg);
-      border-radius: 24px;
-      padding: 30px;
-      width: 100%;
-      max-width: 600px;
-      box-shadow: 0 20px 40px rgba(0,0,0,0.4);
-      text-align: center;
-      border: 1px solid rgba(255,255,255,0.1);
-    }
+        .container {
+            width: 100%;
+            max-width: 500px;
+            background: var(--bg-card);
+            backdrop-filter: blur(16px);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+            text-align: center;
+        }
 
-    h1 {
-      margin-bottom: 20px;
-      font-size: 1.8rem;
-      color: var(--text-color);
-    }
+        h1 {
+            font-size: 2.2rem;
+            color: var(--primary);
+            text-shadow: 0 0 20px var(--primary-glow);
+            margin-bottom: 10px;
+        }
 
-    /* Avatar & Lip Sync Animation */
-    .avatar-container {
-      width: 170px;
-      height: 170px;
-      margin: 0 auto 25px auto;
-      position: relative;
-      background: linear-gradient(135deg, #a29bfe, #6c5ce7);
-      border-radius: 50%;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      box-shadow: 0 10px 25px rgba(108, 92, 231, 0.3);
-      perspective: 1000px;
-    }
+        p {
+            color: var(--text-muted);
+            margin-bottom: 30px;
+            font-size: 0.95rem;
+        }
 
-    .avatar {
-      width: 145px;
-      height: 145px;
-      background-color: #ffeaa7;
-      border-radius: 50%;
-      position: relative;
-      overflow: hidden;
-      transition: transform 0.3s ease;
-      transform-origin: center bottom;
-    }
+        .mode-btn {
+            display: block;
+            width: 100%;
+            padding: 16px;
+            margin-bottom: 15px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            background: rgba(255, 255, 255, 0.05);
+            color: white;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
 
-    /* خدود وردية للشخصية */
-    .avatar::before, .avatar::after {
-      content: '';
-      position: absolute;
-      width: 20px;
-      height: 12px;
-      background-color: #ff7675;
-      opacity: 0.4;
-      border-radius: 50%;
-      top: 65px;
-    }
-    .avatar::before { left: 20px; }
-    .avatar::after { right: 20px; }
+        .mode-btn:hover {
+            background: rgba(230, 57, 70, 0.2);
+            border-color: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px var(--primary-glow);
+        }
 
-    /* حواجب تفاعلية */
-    .eyebrow {
-      width: 22px;
-      height: 4px;
-      background-color: #2d3436;
-      position: absolute;
-      top: 38px;
-      border-radius: 2px;
-      transition: transform 0.2s ease;
-    }
-    .eyebrow.left { left: 32px; }
-    .eyebrow.right { right: 32px; }
-
-    /* العيون والرمش */
-    .eye {
-      width: 20px;
-      height: 20px;
-      background-color: #2d3436;
-      border-radius: 50%;
-      position: absolute;
-      top: 48px;
-      transition: transform 0.1s linear, height 0.1s ease;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
-    .eye::after {
-      content: '';
-      width: 6px;
-      height: 6px;
-      background-color: #ffffff;
-      border-radius: 50%;
-      position: absolute;
-      top: 3px;
-      right: 3px;
-    }
-
-    .eye.left { left: 33px; }
-    .eye.right { right: 33px; }
-
-    /* حالة الرمش */
-    .eye.blink {
-      height: 2px !important;
-      top: 57px !important;
-    }
-
-    /* الفم المتكلم والضاحك */
-    .mouth {
-      width: 36px;
-      height: 6px;
-      background-color: #d63031;
-      border-radius: 10px;
-      position: absolute;
-      bottom: 32px;
-      left: 50%;
-      transform: translateX(-50%);
-      transition: height 0.05s ease, width 0.08s ease, border-radius 0.05s ease;
-    }
-
-    /* Controls Section */
-    .controls {
-      display: flex;
-      justify-content: center;
-      gap: 15px;
-      margin-bottom: 25px;
-    }
-
-    .btn-record {
-      background-color: #ff7675;
-      color: white;
-      border: none;
-      padding: 14px 28px;
-      border-radius: 50px;
-      font-size: 1.1rem;
-      font-weight: bold;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      transition: all 0.3s ease;
-      box-shadow: 0 5px 15px rgba(255, 118, 117, 0.4);
-    }
-
-    .btn-record:hover {
-      background-color: #d63031;
-      transform: translateY(-2px);
-    }
-
-    .btn-record.recording {
-      animation: pulse 1.5s infinite;
-      background-color: #d63031;
-    }
-
-    @keyframes pulse {
-      0% { box-shadow: 0 0 0 0 rgba(214, 48, 49, 0.7); }
-      70% { box-shadow: 0 0 0 15px rgba(214, 48, 49, 0); }
-      100% { box-shadow: 0 0 0 0 rgba(214, 48, 49, 0); }
-    }
-
-    .btn-play {
-      background-color: #00b894;
-      color: white;
-      border: none;
-      padding: 14px 28px;
-      border-radius: 50px;
-      font-size: 1.1rem;
-      font-weight: bold;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      box-shadow: 0 5px 15px rgba(0, 184, 148, 0.4);
-    }
-
-    .btn-play:hover:not(:disabled) {
-      background-color: #00a884;
-      transform: translateY(-2px);
-    }
-
-    .btn-play:disabled {
-      background-color: #636e72;
-      opacity: 0.5;
-      cursor: not-allowed;
-      box-shadow: none;
-    }
-
-    /* Effects Grid */
-    .effects-title {
-      font-size: 1rem;
-      margin-bottom: 12px;
-      color: #a6b0cf;
-      text-align: right;
-    }
-
-    .effects-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
-      gap: 12px;
-    }
-
-    .effect-card {
-      background-color: #0f172a;
-      border: 2px solid #334155;
-      border-radius: 16px;
-      padding: 12px 10px;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .effect-card:hover {
-      border-color: var(--primary);
-      transform: translateY(-2px);
-    }
-
-    .effect-card.active {
-      border-color: var(--accent);
-      background-color: rgba(253, 121, 168, 0.15);
-      box-shadow: 0 0 15px rgba(253, 121, 168, 0.3);
-    }
-
-    .effect-card.highlight {
-      border-color: #fd79a8;
-      background: linear-gradient(145deg, #1e293b, #2d1f3d);
-    }
-
-    .effect-icon {
-      font-size: 1.6rem;
-    }
-
-    .effect-name {
-      font-size: 0.9rem;
-      font-weight: bold;
-    }
-
-    .status-text {
-      margin-top: 15px;
-      font-size: 0.85rem;
-      color: #94a3b8;
-    }
-  </style>
+        .mode-btn.primary {
+            background: linear-gradient(135deg, #e63946, #b71c1c);
+            border: none;
+            box-shadow: 0 4px 15px rgba(230, 57, 70, 0.4);
+        }
+    </style>
 </head>
 <body>
 
-  <div class="container">
-    <h1>مغير الصوت والشخصية الكرتونية</h1>
+    <div class="container">
+        <h1>🎭 لعبة المافيا</h1>
+        <p>اختر طريقة اللعب التي تفضلها مع أصدقائك:</p>
 
-    <!-- الشخصية المتحركة التفاعلية -->
-    <div class="avatar-container">
-      <div class="avatar" id="avatar">
-        <div class="eyebrow left" id="ebLeft"></div>
-        <div class="eyebrow right" id="ebRight"></div>
-        <div class="eye left" id="eyeLeft"></div>
-        <div class="eye right" id="eyeRight"></div>
-        <div class="mouth" id="mouth"></div>
-      </div>
+        <!-- زر الانتقال للعب الأوفلاين (بهاتف واحد) -->
+        <a href="mafia_offline.html" class="mode-btn primary">
+            📱 اللعب المحلي (بدون واي فاي - هاتف واحد)
+        </a>
+
+        <!-- زر الانتقال للعب الأونلاين (الموقع الأول) -->
+        <a href="mafia_online.html" class="mode-btn">
+            🌐 اللعب عبر الإنترنت (أونلاين لكل لاعب جهازه)
+        </a>
     </div>
 
-    <!-- أزرار التسجيل والتشغيل -->
-    <div class="controls">
-      <button class="btn-record" id="recordBtn">
-        <span id="recordIcon">🎙️</span>
-        <span id="recordText">بدء التسجيل</span>
-      </button>
-      <button class="btn-play" id="playBtn" disabled>▶️ تشغيل</button>
-    </div>
-
-    <!-- قائمة التأثيرات -->
-    <div class="effects-title">اختر التأثير الصوتي للشخصية:</div>
-    <div class="effects-grid">
-      <div class="effect-card" data-effect="normal">
-        <span class="effect-icon">🎙️</span>
-        <span class="effect-name">عادي</span>
-      </div>
-
-      <div class="effect-card" data-effect="baby">
-        <span class="effect-icon">👶</span>
-        <span class="effect-name">صغير</span>
-      </div>
-
-      <div class="effect-card highlight active" data-effect="very_baby">
-        <span class="effect-icon">👶⚡</span>
-        <span class="effect-name">صغير بزاف</span>
-      </div>
-
-      <div class="effect-card" data-effect="robot">
-        <span class="effect-icon">🤖</span>
-        <span class="effect-name">روبوت</span>
-      </div>
-
-      <div class="effect-card" data-effect="alien">
-        <span class="effect-icon">👽</span>
-        <span class="effect-name">فضائي</span>
-      </div>
-
-      <div class="effect-card" data-effect="deep">
-        <span class="effect-icon">🐻</span>
-        <span class="effect-name">غليظ</span>
-      </div>
-
-      <div class="effect-card" data-effect="funny">
-        <span class="effect-icon">😂</span>
-        <span class="effect-name">مضحك</span>
-      </div>
-    </div>
-
-    <div class="status-text" id="status">اضغط على "بدء التسجيل" للتحدث من الميكروفون</div>
-  </div>
-
-  <script>
-    // Variables
-    let audioCtx = null;
-    let mediaRecorder = null;
-    let audioChunks = [];
-    let originalAudioBuffer = null;
-    let currentSource = null;
-    let animFrameId = null;
-    let selectedEffect = 'very_baby';
-    let isSpeaking = false;
-    let isListening = false;
-
-    // Elements
-    const recordBtn = document.getElementById('recordBtn');
-    const recordIcon = document.getElementById('recordIcon');
-    const recordText = document.getElementById('recordText');
-    const playBtn = document.getElementById('playBtn');
-    const avatar = document.getElementById('avatar');
-    const mouth = document.getElementById('mouth');
-    const eyeLeft = document.getElementById('eyeLeft');
-    const eyeRight = document.getElementById('eyeRight');
-    const ebLeft = document.getElementById('ebLeft');
-    const ebRight = document.getElementById('ebRight');
-    const statusText = document.getElementById('status');
-    const effectCards = document.querySelectorAll('.effect-card');
-
-    // اختيار التأثير
-    effectCards.forEach(card => {
-      card.addEventListener('click', () => {
-        effectCards.forEach(c => c.classList.remove('active'));
-        card.classList.add('active');
-        selectedEffect = card.dataset.effect;
-      });
-    });
-
-    // --- المحرك المنهجي لحركات الشخصية العشوائية (Idle / Blink / Head movements) ---
-    function randomRange(min, max) {
-      return Math.random() * (max - min) + min;
-    }
-
-    // 1. حركة الرمش العشوائي
-    function startBlinking() {
-      function blink() {
-        if (!isSpeaking) {
-          eyeLeft.classList.add('blink');
-          eyeRight.classList.add('blink');
-          setTimeout(() => {
-            eyeLeft.classList.remove('blink');
-            eyeRight.classList.remove('blink');
-          }, 150);
-        }
-        setTimeout(blink, randomRange(2000, 6000));
-      }
-      blink();
-    }
-
-    // 2. حركات Idle العشوائية (تحريك العيون والرأس)
-    function startIdleAnimations() {
-      setInterval(() => {
-        if (!isSpeaking && !isListening) {
-          // حركة العيون
-          const lookX = randomRange(-4, 4);
-          const lookY = randomRange(-2, 2);
-          eyeLeft.style.transform = `translate(${lookX}px, ${lookY}px)`;
-          eyeRight.style.transform = `translate(${lookX}px, ${lookY}px)`;
-
-          // إمالة خفيفة للرأس
-          const tilt = randomRange(-5, 5);
-          avatar.style.transform = `rotate(${tilt}deg)`;
-        }
-      }, 2500);
-    }
-
-    startBlinking();
-    startIdleAnimations();
-
-    // إدارة التسجيل
-    recordBtn.addEventListener('click', async () => {
-      if (mediaRecorder && mediaRecorder.state === 'recording') {
-        stopRecording();
-      } else {
-        startRecording();
-      }
-    });
-
-    async function startRecording() {
-      try {
-        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-        audioChunks = [];
-        mediaRecorder = new MediaRecorder(stream);
-
-        // دخول وضع الاستماع (Listening State)
-        isListening = true;
-        avatar.style.transform = 'rotate(-8deg) scale(1.05)';
-        ebLeft.style.transform = 'translateY(-3px)';
-        ebRight.style.transform = 'translateY(-3px)';
-        statusText.innerText = "الشخصية تسمعك الآن... اتكلم!";
-
-        mediaRecorder.ondataavailable = event => {
-          if (event.data.size > 0) audioChunks.push(event.data);
-        };
-
-        mediaRecorder.onstop = async () => {
-          isListening = false;
-          avatar.style.transform = 'rotate(0deg) scale(1)';
-          ebLeft.style.transform = 'translateY(0px)';
-          ebRight.style.transform = 'translateY(0px)';
-
-          const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
-          const arrayBuffer = await audioBlob.arrayBuffer();
-          
-          if (!audioCtx) {
-            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-          }
-          
-          originalAudioBuffer = await audioCtx.decodeAudioData(arrayBuffer);
-          playBtn.disabled = false;
-          statusText.innerText = "تم تسجيل صوتك! اضغط تشغيل لمشاهدة الشخصية تعيد كلامك.";
-        };
-
-        mediaRecorder.start();
-        recordBtn.classList.add('recording');
-        recordIcon.innerText = "⏹️";
-        recordText.innerText = "إيقاف التسجيل";
-        playBtn.disabled = true;
-
-      } catch (err) {
-        alert("يرجى السماح بالوصول للميكروفون لتحدث مع الشخصية.");
-        console.error(err);
-      }
-    }
-
-    function stopRecording() {
-      if (mediaRecorder) {
-        mediaRecorder.stop();
-        mediaRecorder.stream.getTracks().forEach(track => track.stop());
-        recordBtn.classList.remove('recording');
-        recordIcon.innerText = "🎙️";
-        recordText.innerText = "بدء التسجيل";
-      }
-    }
-
-    // تشغيل الصوت
-    playBtn.addEventListener('click', () => {
-      if (!originalAudioBuffer) return;
-      if (currentSource) {
-        try { currentSource.stop(); } catch(e){}
-      }
-      playProcessedAudio(originalAudioBuffer, selectedEffect);
-    });
-
-    // معالجة الصوت بـ Web Audio API
-    function playProcessedAudio(buffer, effect) {
-      if (audioCtx.state === 'suspended') {
-        audioCtx.resume();
-      }
-
-      let source = audioCtx.createBufferSource();
-      let analyser = audioCtx.createAnalyser();
-      analyser.fftSize = 256;
-
-      // تطبيق الـ Pitch / Resampling
-      if (effect === 'very_baby') {
-        source.buffer = resampleBuffer(buffer, 2.2);
-      } else if (effect === 'baby') {
-        source.buffer = resampleBuffer(buffer, 1.5);
-      } else if (effect === 'deep') {
-        source.buffer = resampleBuffer(buffer, 0.7);
-      } else if (effect === 'funny') {
-        source.buffer = resampleBuffer(buffer, 1.8);
-      } else {
-        source.buffer = buffer;
-      }
-
-      let lastNode = source;
-
-      if (effect === 'robot') {
-        let biquad = audioCtx.createBiquadFilter();
-        biquad.type = 'peaking';
-        biquad.frequency.value = 1000;
-        biquad.Q.value = 5;
-        biquad.gain.value = 25;
-        lastNode.connect(biquad);
-        lastNode = biquad;
-      } else if (effect === 'alien') {
-        let biquad = audioCtx.createBiquadFilter();
-        biquad.type = 'bandpass';
-        biquad.frequency.value = 2200;
-        biquad.Q.value = 3;
-        lastNode.connect(biquad);
-        lastNode = biquad;
-      } else if (effect === 'very_baby') {
-        let filter = audioCtx.createBiquadFilter();
-        filter.type = 'highpass';
-        filter.frequency.value = 350;
-        lastNode.connect(filter);
-        lastNode = filter;
-      }
-
-      lastNode.connect(analyser);
-      analyser.connect(audioCtx.destination);
-
-      currentSource = source;
-      isSpeaking = true;
-      source.start(0);
-
-      // تشغيل حركة الفم والتعبيرات أثناء الكلام
-      animateCharacterSpeaking(analyser);
-
-      source.onended = () => {
-        isSpeaking = false;
-        if (animFrameId) cancelAnimationFrame(animFrameId);
-        resetCharacterFace();
-      };
-    }
-
-    // خوارزمية تغيير الـ Pitch برمجياً
-    function resampleBuffer(inBuffer, pitchFactor) {
-      let numChannels = inBuffer.numberOfChannels;
-      let oldLength = inBuffer.length;
-      let newLength = Math.floor(oldLength / pitchFactor);
-      let sampleRate = inBuffer.sampleRate;
-
-      let outBuffer = audioCtx.createBuffer(numChannels, newLength, sampleRate);
-
-      for (let channel = 0; channel < numChannels; channel++) {
-        let inputData = inBuffer.getChannelData(channel);
-        let outputData = outBuffer.getChannelData(channel);
-
-        for (let i = 0; i < newLength; i++) {
-          let pos = i * pitchFactor;
-          let index = Math.floor(pos);
-          let fraction = pos - index;
-
-          if (index + 1 < oldLength) {
-            outputData[i] = inputData[index] * (1 - fraction) + inputData[index + 1] * fraction;
-          } else {
-            outputData[i] = inputData[index] || 0;
-          }
-        }
-      }
-      return outBuffer;
-    }
-
-    // تحريك الشخصية أثناء إعادتها لكلامك (Lip-Sync + Expressions)
-    function animateCharacterSpeaking(analyser) {
-      const dataArray = new Uint8Array(analyser.frequencyBinCount);
-
-      function draw() {
-        if (!isSpeaking) return;
-        animFrameId = requestAnimationFrame(draw);
-        analyser.getByteFrequencyData(dataArray);
-
-        let sum = 0;
-        for (let i = 0; i < dataArray.length; i++) {
-          sum += dataArray[i];
-        }
-        let average = sum / dataArray.length;
-
-        // 1. تحريك الفم بالتزامن مع شدة الصوت
-        let mouthHeight = Math.min(Math.max(6, (average / 255) * 50), 45);
-        let mouthWidth = Math.min(Math.max(36, 36 + (average / 255) * 20), 55);
-        mouth.style.height = `${mouthHeight}px`;
-        mouth.style.width = `${mouthWidth}px`;
-        
-        if (mouthHeight > 18) {
-          mouth.style.borderRadius = '40%';
-        } else {
-          mouth.style.borderRadius = '10px';
-        }
-
-        // 2. تعبيرات وحركات وجه عشوائية أثناء التحدث/الضحك
-        if (average > 70) {
-          // هز الرأس والضحك عند النبرات العالية
-          const shakeX = Math.sin(Date.now() / 50) * 4;
-          const shakeY = Math.cos(Date.now() / 50) * 3;
-          avatar.style.transform = `translate(${shakeX}px, ${shakeY}px) rotate(${shakeX}deg)`;
-
-          // رفع الحواجب بحماس
-          ebLeft.style.transform = 'rotate(-10deg) translateY(-4px)';
-          ebRight.style.transform = 'rotate(10deg) translateY(-4px)';
-        } else {
-          avatar.style.transform = 'rotate(0deg)';
-          ebLeft.style.transform = 'rotate(0deg) translateY(0px)';
-          ebRight.style.transform = 'rotate(0deg) translateY(0px)';
-        }
-      }
-
-      draw();
-    }
-
-    // إرجاع الشخصية لوضعية الاسترخاء (Idle)
-    function resetCharacterFace() {
-      mouth.style.height = '6px';
-      mouth.style.width = '36px';
-      mouth.style.borderRadius = '10px';
-      avatar.style.transform = 'rotate(0deg)';
-      eyeLeft.style.transform = 'translate(0px, 0px)';
-      eyeRight.style.transform = 'translate(0px, 0px)';
-      ebLeft.style.transform = 'rotate(0deg) translateY(0px)';
-      ebRight.style.transform = 'rotate(0deg) translateY(0px)';
-    }
-  </script>
 </body>
 </html>
